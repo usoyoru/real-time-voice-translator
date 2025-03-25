@@ -1,56 +1,111 @@
-<div align="center">
-<h1> LinguaSync: Real-Time Voice Translator </h1> <a href="#"><img alt="language" src="https://user-images.githubusercontent.com/132539454/278971782-9453805e-e2e6-4d99-b1de-cf8fcd3e7105.svg"></a>
-</div>
+# 中文语音识别应用
 
-Real-Time Voice Translator is a machine learning project that aims to provide a seamless and natural experience of cross-lingual communication. It uses deep neural networks to translate voice from one language to another in real time while preserving the tone and emotion of the speaker. It is a desktop application that supports Windows, Linux, and Mac operating systems.
+一个简单的中文语音识别应用，可以实时将麦克风输入的语音转换为文字。
 
-The application is easy to use: simply select the languages you want to translate between and start speaking. The application will listen to your voice and provide instant translations in real-time. You can also use the application to translate conversations between two or more people.
+## 重要提示
+**在使用前，必须先设置有效的Azure语音服务API密钥和区域**。未正确配置会导致应用程序无法连接到Azure服务。
 
+## 功能
+- 实时中文语音识别
+- 提供命令行和图形用户界面两种使用方式
+- 基于Azure语音服务，识别准确率高
 
-### Dependencies
-    <=Python3.11, gTTS, pyaudio, playsound==1.2.2, deep-translator, SpeechRecognition, google-transliteration-api, cx-Freeze
+## 安装步骤
 
+1. 确保已安装Python 3.6或更高版本
 
-### Getting started
+2. 安装依赖库
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-1. Clone this project and create virtualenv (recommended) and activate virtualenv.
-    ```
-    # Create virtualenv
-    python -m venv env
- 
-    # Linux/MacOS
-    source env/bin/activate
-    
-    # Windows
-    env\Scripts\activate
-    ```
-    
-2. Install require dependencies.
-    ```
-    pip install --upgrade wheel
-    
-    pip install -r requirements.txt
-    ```
+3. 获取Azure语音服务API密钥
+   - 访问 [Azure门户](https://portal.azure.com/) 并登录
+   - 创建语音服务资源（如果没有）：
+     1. 点击"创建资源"
+     2. 搜索"语音服务"
+     3. 选择语音服务并点击"创建"
+     4. 填写所需信息（订阅、资源组、区域等）
+     5. 创建完成后，转到资源页面
+   - 获取API密钥和区域信息：
+     1. 在资源页面，点击左侧菜单的"密钥和终结点"
+     2. 复制"密钥1"（或"密钥2"）和"区域"信息
 
-3. Run code and speech (have fun).
-    ```
-    python main.py
-    ```
+4. 配置API密钥
+   - 在项目根目录下编辑`.env`文件
+   - 将您的Azure语音服务密钥和区域填入相应位置：
+     ```
+     AZURE_SPEECH_KEY=your_azure_speech_key_here
+     AZURE_SPEECH_REGION=your_azure_region_here
+     ```
+   - 注意：一定要用实际的密钥替换`your_azure_speech_key_here`和实际的区域替换`your_azure_region_here`
+   - 区域示例：`eastasia`、`eastus`、`westus`等
 
-### Program Flow:
-<a href="#"><img src="https://github.com/SamirPaulb/real-time-voice-translator/assets/77569653/73dd62d6-798d-4129-aff3-16d6d932a817" alt="Block Diagram of Voice Translator"></a>
+## 使用方法
 
+### 命令行版本
+```bash
+python voice_recognition_mic_free.py
+```
+- 对着麦克风说话，识别结果将在控制台显示
+- 每次说话后都会进行一次识别
+- 按Ctrl+C退出程序
 
-### Install Windows/Linux/Mac Application <a href="https://github.com/SamirPaulb/real-time-voice-translator/releases/latest"><img src="https://user-images.githubusercontent.com/132539454/278971282-8d676023-a03a-463c-8e55-3f0afe6e3e58.svg" alt="DOWNLOAD"></a>
+### 图形界面版本
+```bash
+python voice_recognition_gui_mic_free.py
+```
+- 点击"开始识别"按钮开始语音识别
+- 对着麦克风说话，识别结果将在文本区域显示
+- 点击"停止识别"按钮停止识别
+- 点击"清空文本"按钮清除已识别的文本
 
-I am using <a href="https://github.com/marcelotduarte/cx_Freeze/tree/main">cx_Freeze</a> to build executable file of this app. The build settings can be changed by modifying the <a href="https://github.com/SamirPaulb/real-time-voice-translator/blob/main/setup.py">setup.py</a> file.
+## 解决PyAudio安装问题
 
-##### Build installer containing all the files:
-- Windows: ```python setup.py bdist_msi```
-- Linux: ```python setup.py bdist_rpm```
-- Mac: ```python setup.py bdist_mac```
+如果你想使用原始版本（voice_recognition.py 和 voice_recognition_gui.py），你需要安装PyAudio。在Windows上安装PyAudio可能会遇到问题，可以尝试以下方法：
 
+### 方法1：使用预编译的wheel文件
+```bash
+# 对于Python 3.11 64位
+pip install https://download.lfd.uci.edu/pythonlibs/archived/PyAudio-0.2.11-cp311-cp311-win_amd64.whl
 
-### GUI 
-<a href="#"><img src="https://github.com/SamirPaulb/real-time-voice-translator/assets/77569653/f96a4115-a88f-4096-9a00-954b8527d872" alt="App GUI"></a>
+# 对于其他Python版本，请查找对应的wheel文件
+```
 
+### 方法2：安装必需的C++构建工具
+1. 安装Visual C++ Build Tools
+2. 然后再尝试安装PyAudio
+```bash
+pip install pyaudio
+```
+
+## 常见问题
+
+### Connection failed (无法连接到远程主机)
+- 错误信息: `Connection failed (no connection to the remote host)`
+- 解决方法:
+  1. 检查`.env`文件中的API密钥和区域是否正确填写，不要保留默认值
+  2. 确保网络连接正常
+  3. 检查Azure账户是否有效，语音服务是否可用
+
+### 无法识别语音
+- 确保麦克风正常工作并且已经正确连接
+- 确保已授予应用使用麦克风的权限（在Windows设置中检查）
+- 使用Windows声音设置测试麦克风
+
+### API密钥错误
+- 确保已正确设置Azure语音服务的API密钥和区域
+- 检查API密钥是否有效，可能需要在Azure门户中重新生成密钥
+- 确保区域名称正确（例如`eastus`而不是`East US`）
+
+## 环境要求
+- Python 3.6+
+- Windows/macOS/Linux
+- 麦克风设备
+- 网络连接（用于连接Azure语音服务）
+- 有效的Azure账户和语音服务订阅
+
+## 注意事项
+- 该应用使用的是付费的Azure语音服务，请注意服务使用量和费用
+- 默认设置为中文识别，如需其他语言，请修改代码中的`speech_recognition_language`参数
+- 免费层Azure语音服务有使用限制，查看Azure门户了解详情 
